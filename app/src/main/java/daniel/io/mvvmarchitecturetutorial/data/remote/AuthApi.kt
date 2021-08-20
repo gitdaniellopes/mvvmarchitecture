@@ -10,7 +10,7 @@ interface AuthApi {
     //field por que são campos
     @FormUrlEncoded
     @POST("auth/login")
-    fun login(
+    suspend fun login(
         @Field("email") email: String,
         @Field("email") password: String,
     ): UserResponse
