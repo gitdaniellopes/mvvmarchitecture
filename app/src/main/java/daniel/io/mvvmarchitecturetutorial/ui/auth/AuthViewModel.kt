@@ -1,4 +1,9 @@
 package daniel.io.mvvmarchitecturetutorial.ui.auth
 
-class AuthViewModel {
+import androidx.lifecycle.ViewModel
+import daniel.io.mvvmarchitecturetutorial.repository.AuthRepository
+
+class AuthViewModel(
+    private val repository: AuthRepository
+) : ViewModel() {
 }
