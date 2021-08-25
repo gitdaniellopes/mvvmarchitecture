@@ -1,6 +1,6 @@
-package daniel.io.mvvmarchitecturetutorial.data.model
+package daniel.io.mvvmarchitecturetutorial.data.modelresponse
 
-data class UserModel(
+data class User(
     val access_token: String,
     val created_at: String,
     val email: String,
