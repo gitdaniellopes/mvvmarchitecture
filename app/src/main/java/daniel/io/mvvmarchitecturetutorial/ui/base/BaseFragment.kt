@@ -8,11 +8,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
+import daniel.io.mvvmarchitecturetutorial.data.UserPreferences
 import daniel.io.mvvmarchitecturetutorial.data.remote.RemoteDataSource
 import daniel.io.mvvmarchitecturetutorial.repository.BaseRepository
 
 abstract class BaseFragment<VM : ViewModel, VB : ViewBinding, RE : BaseRepository> : Fragment() {
 
+    protected lateinit var userPreferences: UserPreferences
     protected lateinit var binding: VB
     protected lateinit var viewModel: VM
 
@@ -23,6 +25,7 @@ abstract class BaseFragment<VM : ViewModel, VB : ViewBinding, RE : BaseRepositor
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        userPreferences = UserPreferences(requireContext())
         binding = getFragmentBinding(inflater, container)
         val factory = ViewModelFactory(getFragmentRepository())
         viewModel = ViewModelProvider(this, factory).get(getViewModel())

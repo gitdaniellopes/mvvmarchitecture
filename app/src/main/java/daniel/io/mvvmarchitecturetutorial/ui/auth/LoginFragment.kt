@@ -5,12 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import daniel.io.mvvmarchitecturetutorial.data.remote.AuthApi
 import daniel.io.mvvmarchitecturetutorial.data.remote.Resource
 import daniel.io.mvvmarchitecturetutorial.databinding.FragmentLoginBinding
 import daniel.io.mvvmarchitecturetutorial.repository.AuthRepository
 import daniel.io.mvvmarchitecturetutorial.ui.base.BaseFragment
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding, AuthRepository>() {
@@ -21,6 +23,9 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding, AuthRepo
         viewModel.loginResponse.observe(viewLifecycleOwner, {
             when (it) {
                 is Resource.Success -> {
+                    lifecycleScope.launch {
+                        userPreferences.saveAuthToken(it.value.user.access_token)
+                    }
                     Toast.makeText(requireContext(), it.toString(), Toast.LENGTH_SHORT).show()
                 }
                 is Resource.Failure -> {
