@@ -3,7 +3,13 @@ package daniel.io.mvvmarchitecturetutorial.ui
 import android.app.Activity
 import android.content.Intent
 import android.view.View
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
+import daniel.io.mvvmarchitecturetutorial.data.remote.Resource
+import daniel.io.mvvmarchitecturetutorial.ui.auth.LoginFragment
+import daniel.io.mvvmarchitecturetutorial.ui.home.HomeActivity
+import kotlinx.coroutines.launch
 
 fun <A : Activity> Activity.startNewActivity(activity: Class<A>) {
     Intent(this, activity).also {
@@ -31,31 +37,31 @@ fun View.snackbar(message: String, action: (() -> Unit)? = null) {
     snackbar.show()
 }
 
-//fun Fragment.logout() = lifecycleScope.launch {
-//    if (activity is HomeActivity) {
-//        (activity as HomeActivity).performLogout()
-//    }
-//}
-//
-//fun Fragment.handleApiError(
-//    failure: Resource.Failure,
-//    retry: (() -> Unit)? = null
-//) {
-//    when {
-//        failure.isNetworkError -> requireView().snackbar(
-//            "Please check your internet connection",
-//            retry
-//        )
-//        failure.errorCode == 401 -> {
-//            if (this is LoginFragment) {
-//                requireView().snackbar("You've entered incorrect email or password")
-//            } else {
-//                logout()
-//            }
-//        }
-//        else -> {
-//            val error = failure.errorBody?.string().toString()
-//            requireView().snackbar(error)
-//        }
-//    }
-//}
+fun Fragment.logout() = lifecycleScope.launch {
+    if (activity is HomeActivity) {
+        (activity as HomeActivity).performLogout()
+    }
+}
+
+fun Fragment.handleApiError(
+    failure: Resource.Failure,
+    retry: (() -> Unit)? = null
+) {
+    when {
+        failure.isNetworkError!! -> requireView().snackbar(
+            "Please check your internet connection",
+            retry
+        )
+        failure.errorCode == 401 -> {
+            if (this is LoginFragment) {
+                requireView().snackbar("You've entered incorrect email or password")
+            } else {
+                logout()
+            }
+        }
+        else -> {
+            val error = failure.errorBody?.string().toString()
+            requireView().snackbar(error)
+        }
+    }
+}
