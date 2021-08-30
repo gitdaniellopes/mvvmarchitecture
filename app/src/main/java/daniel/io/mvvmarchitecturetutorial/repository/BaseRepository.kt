@@ -1,6 +1,7 @@
 package daniel.io.mvvmarchitecturetutorial.repository
 
 import daniel.io.mvvmarchitecturetutorial.data.remote.Resource
+import daniel.io.mvvmarchitecturetutorial.data.remote.UserApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -24,5 +25,9 @@ abstract class BaseRepository {
                 }
             }
         }
+    }
+
+    suspend fun logout(api: UserApi) = withContext(Dispatchers.IO){
+        api.logout()
     }
 }

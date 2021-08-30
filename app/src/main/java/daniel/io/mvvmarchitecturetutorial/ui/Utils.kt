@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import daniel.io.mvvmarchitecturetutorial.data.remote.Resource
 import daniel.io.mvvmarchitecturetutorial.ui.auth.LoginFragment
+import daniel.io.mvvmarchitecturetutorial.ui.base.BaseFragment
 import daniel.io.mvvmarchitecturetutorial.ui.home.HomeActivity
 import kotlinx.coroutines.launch
 
@@ -56,6 +57,7 @@ fun Fragment.handleApiError(
             if (this is LoginFragment) {
                 requireView().snackbar("You've entered incorrect email or password")
             } else {
+                (this as BaseFragment<*, *, *>).logout()
                 logout()
             }
         }

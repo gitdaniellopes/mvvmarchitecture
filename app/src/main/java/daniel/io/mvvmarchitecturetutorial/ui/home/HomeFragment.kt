@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import dagger.hilt.android.AndroidEntryPoint
-import daniel.io.mvvmarchitecturetutorial.data.modelresponse.LoginResponse
 import daniel.io.mvvmarchitecturetutorial.data.modelresponse.User
 import daniel.io.mvvmarchitecturetutorial.data.remote.Resource
 import daniel.io.mvvmarchitecturetutorial.data.remote.UserApi
@@ -27,7 +26,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding, UserReposi
 
         viewModel.getUser()
         viewModel.user.observe(viewLifecycleOwner, Observer {
-            when(it){
+            when (it) {
                 is Resource.Success -> {
                     binding.progressbar.visible(false)
                     updateUi(it.value.user)
@@ -37,10 +36,14 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding, UserReposi
                 }
             }
         })
+
+        binding.buttonLogout.setOnClickListener {
+            logout()
+        }
     }
 
     private fun updateUi(user: User) {
-        with(binding){
+        with(binding) {
             textViewId.text = user.id.toString()
             textViewName.text = user.name
             textViewEmail.text = user.email
