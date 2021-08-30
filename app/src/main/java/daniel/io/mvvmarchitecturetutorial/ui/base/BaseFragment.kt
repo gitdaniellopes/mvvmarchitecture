@@ -7,10 +7,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
 import daniel.io.mvvmarchitecturetutorial.data.UserPreferences
 import daniel.io.mvvmarchitecturetutorial.data.remote.RemoteDataSource
 import daniel.io.mvvmarchitecturetutorial.repository.BaseRepository
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 abstract class BaseFragment<VM : ViewModel, VB : ViewBinding, RE : BaseRepository> : Fragment() {
 
@@ -29,6 +32,9 @@ abstract class BaseFragment<VM : ViewModel, VB : ViewBinding, RE : BaseRepositor
         binding = getFragmentBinding(inflater, container)
         val factory = ViewModelFactory(getFragmentRepository())
         viewModel = ViewModelProvider(this, factory).get(getViewModel())
+
+        lifecycleScope.launch { userPreferences.authToken.first() }
+
         return binding.root
     }
 
