@@ -6,23 +6,33 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class UserPreferences(
-    context: Context
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+
+class UserPreferences
+@Inject constructor(
+    @ApplicationContext context: Context
 ) {
     private val applicationContext = context.applicationContext
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
-    val authToken: Flow<String?>
+    val accessToken: Flow<String?>
         get() = applicationContext.dataStore.data.map { preferences ->
-            preferences[KEY_AUTH]
+            preferences[ACCESS_TOKEN]
         }
 
-    suspend fun saveAuthToken(authToken: String) {
+    val refreshToken: Flow<String?>
+        get() = applicationContext.dataStore.data.map { preferences ->
+            preferences[REFRESH_TOKEN]
+        }
+
+    suspend fun saveAccessTokens(accessToken: String, refreshToken: String) {
         applicationContext.dataStore.edit { preferences ->
-            preferences[KEY_AUTH] = authToken
+            preferences[ACCESS_TOKEN] = accessToken
+            preferences[REFRESH_TOKEN] = refreshToken
         }
     }
 
@@ -33,6 +43,7 @@ class UserPreferences(
     }
 
     companion object {
-        private val KEY_AUTH = stringPreferencesKey("key_auth")
+        private val ACCESS_TOKEN = stringPreferencesKey("key_access_token")
+        private val REFRESH_TOKEN = stringPreferencesKey("key_refresh_token")
     }
 }

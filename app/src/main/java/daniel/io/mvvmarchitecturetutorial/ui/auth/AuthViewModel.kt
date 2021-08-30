@@ -4,13 +4,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import daniel.io.mvvmarchitecturetutorial.data.modelresponse.LoginResponse
 import daniel.io.mvvmarchitecturetutorial.data.remote.Resource
 import daniel.io.mvvmarchitecturetutorial.repository.AuthRepository
 import daniel.io.mvvmarchitecturetutorial.ui.base.BaseViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AuthViewModel(
+@HiltViewModel
+class AuthViewModel @Inject constructor(
     private val repository: AuthRepository
 ) : BaseViewModel(repository) {
 
@@ -21,10 +24,11 @@ class AuthViewModel(
         email: String,
         password: String
     ) = viewModelScope.launch {
+        _loginResponse.value = Resource.Loading
         _loginResponse.value = repository.login(email, password)
     }
 
-   suspend fun saveAuthToken(token: String) = viewModelScope.launch {
-        repository.saveAuthToken(token)
+    suspend fun saveAccessTokens(accessToken: String, refreshToken: String) {
+        repository.saveAccessTokens(accessToken, refreshToken)
     }
 }

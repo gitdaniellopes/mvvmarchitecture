@@ -1,26 +1,11 @@
 package daniel.io.mvvmarchitecturetutorial.repository
 
 import daniel.io.mvvmarchitecturetutorial.data.remote.UserApi
+import javax.inject.Inject
 
-class UserRepository(
-//    private val api: AuthApi,
-//    private val preferences: UserPreferences
+class UserRepository @Inject constructor(
     private val api: UserApi
-) : BaseRepository() {
+) : BaseRepository(api) {
 
-    suspend fun getUser() = safeApiCall {
-        api.getUser()
-    }
-
-
-//    suspend fun login(
-//        email: String,
-//        password: String
-//    ) = safeApiCall {
-//        api.login(email, password)
-//    }
-//
-//    suspend fun saveAuthToken(token: String) {
-//        preferences.saveAuthToken(token)
-//    }
+    suspend fun getUser() = safeApiCall { api.getUser() }
 }

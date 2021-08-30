@@ -1,31 +1,31 @@
 package daniel.io.mvvmarchitecturetutorial.ui.auth
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import daniel.io.mvvmarchitecturetutorial.MainActivity
-import daniel.io.mvvmarchitecturetutorial.data.remote.AuthApi
+import daniel.io.mvvmarchitecturetutorial.R
 import daniel.io.mvvmarchitecturetutorial.data.remote.Resource
 import daniel.io.mvvmarchitecturetutorial.databinding.FragmentLoginBinding
-import daniel.io.mvvmarchitecturetutorial.repository.AuthRepository
-import daniel.io.mvvmarchitecturetutorial.ui.base.BaseFragment
 import daniel.io.mvvmarchitecturetutorial.ui.enable
 import daniel.io.mvvmarchitecturetutorial.ui.handleApiError
+import daniel.io.mvvmarchitecturetutorial.ui.home.HomeActivity
 import daniel.io.mvvmarchitecturetutorial.ui.startNewActivity
 import daniel.io.mvvmarchitecturetutorial.ui.visible
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding, AuthRepository>() {
+class LoginFragment : Fragment(R.layout.fragment_login) {
+
+    private lateinit var binding: FragmentLoginBinding
+    private val viewModel by viewModels<AuthViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
+        binding = FragmentLoginBinding.bind(view)
         binding.progressbar.visible(false)
         binding.buttonLogin.enable(false)
 
@@ -34,8 +34,11 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding, AuthRepo
             when (it) {
                 is Resource.Success -> {
                     lifecycleScope.launch {
-                        viewModel.saveAuthToken(it.value.user.access_token!!)
-                        requireActivity().startNewActivity(MainActivity::class.java)
+                        viewModel.saveAccessTokens(
+                            it.value.user.access_token!!,
+                            it.value.user.refresh_token!!
+                        )
+                        requireActivity().startNewActivity(HomeActivity::class.java)
                     }
                 }
                 is Resource.Failure -> handleApiError(it) { login() }
@@ -57,14 +60,4 @@ class LoginFragment : BaseFragment<AuthViewModel, FragmentLoginBinding, AuthRepo
         val password = binding.editTextTextPassword.text.toString().trim()
         viewModel.login(email, password)
     }
-
-    override fun getViewModel() = AuthViewModel::class.java
-
-    override fun getFragmentBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): FragmentLoginBinding = FragmentLoginBinding.inflate(inflater, container, false)
-
-    override fun getFragmentRepository() =
-        AuthRepository(remoteDataSource.buildApi(AuthApi::class.java), userPreferences)
 }
